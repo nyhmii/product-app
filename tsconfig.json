@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "lib": ["dom", "es2017", "esnext", "es2015"],
+    "jsx": "react",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": "./",
+    "paths": {
+      "*": ["server/*"]
+    },
+    "outDir": "./dist",
+    "rootDir": "./",
+  },
+  "include": [
+    "server/**/*.ts",
+    "server/**/*.tsx",
+    "client/**/*.ts",
+    "client/**/*.tsx"
+  ],
+  "exclude": ["node_modules"]
+}
