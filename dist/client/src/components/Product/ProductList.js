@@ -30,13 +30,23 @@ const react_1 = __importStar(require("react"));
 const axios_1 = __importDefault(require("axios"));
 const ProductList = () => {
     const [products, setProducts] = (0, react_1.useState)([]);
+    const [error, setError] = (0, react_1.useState)(null);
     (0, react_1.useEffect)(() => {
-        axios_1.default.get('/api/products').then((response) => {
-            setProducts(response.data);
-        });
+        const fetchProducts = async () => {
+            try {
+                const response = await axios_1.default.get('/api/products');
+                setProducts(response.data);
+            }
+            catch (err) {
+                setError('Error fetching products');
+                console.error('Error fetching products:', err);
+            }
+        };
+        fetchProducts();
     }, []);
     return (react_1.default.createElement("div", null,
         react_1.default.createElement("h1", null, "Product List"),
+        error && react_1.default.createElement("p", null, error),
         react_1.default.createElement("ul", null, products.map((product) => (react_1.default.createElement("li", { key: product._id },
             product.name,
             " - $",

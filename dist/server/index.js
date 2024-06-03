@@ -37,31 +37,26 @@ dotenv.config();
 const productApp = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
+console.log('Before clientBuildPath');
+const clientBuildPath = path_1.default.join(__dirname, '..', 'client', 'public');
+console.log('After clientBuildPath');
+console.log(clientBuildPath);
 RedisClient_1.redisClient.connect();
-// Log Redis connection success
 RedisClient_1.redisClient.on('ready', () => {
     console.log('Connected to Redis');
 });
-// Log Redis connection errors
 RedisClient_1.redisClient.on('error', (err) => {
     console.log('Redis Client Error:', err);
 });
-// MongoDB connection
-mongoose_1.default.connect(MONGODB_URI, {
-// Remove useUnifiedTopology option
-});
-// Check if connection is successful
-mongoose_1.default.connection.once('open', () => {
-    console.log('Connected to MongoDB');
-});
+mongoose_1.default.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.log('MongoDB connection error:', err));
 productApp.use((0, cors_1.default)());
 productApp.use(express_1.default.json());
 productApp.use('/api/products', productRoutes_1.default);
-// Serve static files from the React build directory
-productApp.use(express_1.default.static(path_1.default.join(__dirname, 'client', 'build')));
-// Handle requests to any other route by serving the client's index.html
+productApp.use(express_1.default.static(clientBuildPath));
 productApp.get('*', (req, res) => {
-    res.sendFile(path_1.default.join(__dirname, 'client', 'build', 'index.html'));
+    res.sendFile(path_1.default.join(clientBuildPath, 'index.html'));
 });
 productApp.use((err, req, res, next) => {
     console.error('Error:', err);

@@ -1,39 +1,38 @@
 import express from 'express';
-import Product, { IProduct } from '../models/Product';
+import Product from '../models/Product';
 import { redisClient } from '../utils/RedisClient';
 
 const router = express.Router();
 
-// Read all products (including caching)
 router.get('/', async (req, res, next) => {
   try {
     const cachedProducts = await redisClient.get('products');
     if (cachedProducts) {
       return res.json(JSON.parse(cachedProducts));
     }
-
     const products = await Product.find();
     await redisClient.set('products', JSON.stringify(products));
     res.json(products);
   } catch (error) {
-    next(error); // Pass the error to the next middleware (global error handler)
+    next(error);
   }
 });
 
-// Create a new product
 router.post('/', async (req, res, next) => {
   const { name, price, description } = req.body;
-
   try {
     const product = new Product({ name, price, description });
     await product.save();
+    
+    // Invalidate the cache after adding a new product
+    await redisClient.del('products');
+
     res.status(201).json(product);
   } catch (error) {
-    next(error); // Pass the error to the next middleware (global error handler)
+    next(error);
   }
 });
 
-// Read a single product by ID
 router.get('/:id', async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -43,14 +42,12 @@ router.get('/:id', async (req, res, next) => {
       res.status(404).json({ message: 'Product not found' });
     }
   } catch (error) {
-    next(error); // Pass the error to the next middleware (global error handler)
+    next(error);
   }
 });
 
-// Update a product by ID
 router.put('/:id', async (req, res, next) => {
   const { name, price, description } = req.body;
-
   try {
     const product = await Product.findById(req.params.id);
     if (product) {
@@ -63,24 +60,24 @@ router.put('/:id', async (req, res, next) => {
       res.status(404).json({ message: 'Product not found' });
     }
   } catch (error) {
-    next(error); // Pass the error to the next middleware (global error handler)
+    next(error);
   }
 });
 
-// Delete a product by ID
 router.delete('/:id', async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
     if (product) {
-      await product.deleteOne(); // Use delete method instead of remove
+      await product.deleteOne();
+      // Invalidate the cache after deleting a product
+      await redisClient.del('products');
       res.json({ message: 'Product removed' });
     } else {
       res.status(404).json({ message: 'Product not found' });
     }
   } catch (error) {
-    next(error); // Pass the error to the next middleware (global error handler)
+    next(error);
   }
 });
-
 
 export default router;

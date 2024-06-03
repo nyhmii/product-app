@@ -15,7 +15,7 @@ const ProductForm: React.FC = () => {
       setPrice('');
       setDescription('');
     } catch (error) {
-      console.error(error);
+      console.error('Error submitting product:', error);
     }
   };
 

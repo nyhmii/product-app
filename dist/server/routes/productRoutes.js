@@ -7,7 +7,6 @@ const express_1 = __importDefault(require("express"));
 const Product_1 = __importDefault(require("../models/Product"));
 const RedisClient_1 = require("../utils/RedisClient");
 const router = express_1.default.Router();
-// Read all products (including caching)
 router.get('/', async (req, res, next) => {
     try {
         const cachedProducts = await RedisClient_1.redisClient.get('products');
@@ -19,10 +18,9 @@ router.get('/', async (req, res, next) => {
         res.json(products);
     }
     catch (error) {
-        next(error); // Pass the error to the next middleware (global error handler)
+        next(error);
     }
 });
-// Create a new product
 router.post('/', async (req, res, next) => {
     const { name, price, description } = req.body;
     try {
@@ -31,10 +29,9 @@ router.post('/', async (req, res, next) => {
         res.status(201).json(product);
     }
     catch (error) {
-        next(error); // Pass the error to the next middleware (global error handler)
+        next(error);
     }
 });
-// Read a single product by ID
 router.get('/:id', async (req, res, next) => {
     try {
         const product = await Product_1.default.findById(req.params.id);
@@ -46,10 +43,9 @@ router.get('/:id', async (req, res, next) => {
         }
     }
     catch (error) {
-        next(error); // Pass the error to the next middleware (global error handler)
+        next(error);
     }
 });
-// Update a product by ID
 router.put('/:id', async (req, res, next) => {
     const { name, price, description } = req.body;
     try {
@@ -66,15 +62,14 @@ router.put('/:id', async (req, res, next) => {
         }
     }
     catch (error) {
-        next(error); // Pass the error to the next middleware (global error handler)
+        next(error);
     }
 });
-// Delete a product by ID
 router.delete('/:id', async (req, res, next) => {
     try {
         const product = await Product_1.default.findById(req.params.id);
         if (product) {
-            await product.deleteOne(); // Use delete method instead of remove
+            await product.deleteOne();
             res.json({ message: 'Product removed' });
         }
         else {
@@ -82,7 +77,7 @@ router.delete('/:id', async (req, res, next) => {
         }
     }
     catch (error) {
-        next(error); // Pass the error to the next middleware (global error handler)
+        next(error);
     }
 });
 exports.default = router;
