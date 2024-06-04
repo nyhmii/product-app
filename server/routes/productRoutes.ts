@@ -33,6 +33,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+//still need to use/ incase I don't Use a search function
 router.get('/:id', async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);

@@ -20,33 +20,45 @@ const ProductForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Name:</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Price:</label>
-        <input
-          type="text"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Description:</label>
-        <input
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </div>
-      <button type="submit">Submit</button>
-    </form>
+    <div className="edit-form">
+      <h2>Add Product</h2>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Name:
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="form-control"
+          />
+        </label>
+        <br />
+        <label>
+          Price:
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="form-control"
+          />
+        </label>
+        <br />
+        <label>
+          Description:
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="form-control"
+          />
+        </label>
+        <br />
+        <div className="button-group">
+          <button type="submit" className="btn-submit">Add</button>
+          <button type="button" className="btn-cancel" onClick={() => { setName(''); setPrice(''); setDescription(''); }}>Clear</button>
+        </div>
+      </form>
+    </div>
   );
 };
 
