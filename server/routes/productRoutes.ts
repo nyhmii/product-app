@@ -2,6 +2,7 @@ import express from 'express';
 import Product from '../models/Product';
 import { redisClient } from '../utils/RedisClient';
 
+//my API rOuter
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
@@ -24,7 +25,7 @@ router.post('/', async (req, res, next) => {
     const product = new Product({ name, price, description });
     await product.save();
     
-    // Invalidate the cache after adding a new product
+    //Invalidate the cache after adding a new product
     await redisClient.del('products');
 
     res.status(201).json(product);

@@ -1,62 +1,40 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const mongoose_1 = __importDefault(require("mongoose"));
-const dotenv = __importStar(require("dotenv"));
+const mongoose_1 = __importDefault(require("mongoose")); //I noticed that this might be depreciated
+const dotenv_1 = __importDefault(require("dotenv"));
 const productRoutes_1 = __importDefault(require("./routes/productRoutes"));
 const RedisClient_1 = require("./utils/RedisClient");
 const path_1 = __importDefault(require("path"));
 const cors_1 = __importDefault(require("cors"));
-dotenv.config();
+dotenv_1.default.config();
+//my consts with defaults
 const productApp = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-console.log('Before clientBuildPath');
-const clientBuildPath = path_1.default.join(__dirname, '..', 'client', 'public');
-console.log('After clientBuildPath');
-console.log(clientBuildPath);
+const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME || 'defaultdb';
 RedisClient_1.redisClient.connect();
 RedisClient_1.redisClient.on('ready', () => {
     console.log('Connected to Redis');
 });
 RedisClient_1.redisClient.on('error', (err) => {
-    console.log('Redis Client Error:', err);
+    console.error('Redis Client Error:', err);
 });
-mongoose_1.default.connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose_1.default.connect(`${MONGODB_URI}/${MONGODB_DB_NAME}`)
     .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.log('MongoDB connection error:', err));
+    .catch(err => console.error('MongoDB connection error:', err));
 productApp.use((0, cors_1.default)());
 productApp.use(express_1.default.json());
+// Serve static files
+productApp.use(express_1.default.static(path_1.default.join(__dirname, '..', 'client', 'public')));
+// API routes
 productApp.use('/api/products', productRoutes_1.default);
-productApp.use(express_1.default.static(clientBuildPath));
+// Handle client-side routing for SPA
 productApp.get('*', (req, res) => {
-    res.sendFile(path_1.default.join(clientBuildPath, 'index.html'));
+    res.sendFile(path_1.default.join(__dirname, '..', 'client', 'public', 'index.html'));
 });
 productApp.use((err, req, res, next) => {
     console.error('Error:', err);

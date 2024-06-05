@@ -26,12 +26,15 @@ router.post('/', async (req, res, next) => {
     try {
         const product = new Product_1.default({ name, price, description });
         await product.save();
+        // Invalidate the cache after adding a new product
+        await RedisClient_1.redisClient.del('products');
         res.status(201).json(product);
     }
     catch (error) {
         next(error);
     }
 });
+//still need to use/ incase I don't Use a search function
 router.get('/:id', async (req, res, next) => {
     try {
         const product = await Product_1.default.findById(req.params.id);
@@ -70,6 +73,8 @@ router.delete('/:id', async (req, res, next) => {
         const product = await Product_1.default.findById(req.params.id);
         if (product) {
             await product.deleteOne();
+            // Invalidate the cache after deleting a product
+            await RedisClient_1.redisClient.del('products');
             res.json({ message: 'Product removed' });
         }
         else {

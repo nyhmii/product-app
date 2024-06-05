@@ -16,6 +16,7 @@ const ProductList: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchVisible, setSearchVisible] = useState<boolean>(true);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -36,13 +37,17 @@ const ProductList: React.FC = () => {
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
-    setSearchVisible(false); // Hide search input
+    setSearchVisible(false); //Hide search input
   };
 
   const handleDelete = async (productId: string) => {
     try {
       await axios.delete(`/api/products/${productId}`);
       setProducts(products.filter(product => product._id !== productId));
+      setSuccessMessage('Product deleted successfully!');
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
     } catch (err) {
       setError('Error deleting product');
       console.error('Error deleting product:', err);
@@ -57,12 +62,16 @@ const ProductList: React.FC = () => {
         setEditingProduct(null); 
         //Update state directly to reflect changes
         setProducts(products.map(p => p._id === editingProduct._id ? editingProduct : p));
+        setSuccessMessage('Product updated successfully!');
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 3000);
       } catch (err) {
         setError('Error updating product');
         console.error('Error updating product:', err);
       }
     }
-    setSearchVisible(true); // Show search input
+    setSearchVisible(true); //Show search input
   };
 
   const clearSearch = () => {
@@ -97,6 +106,9 @@ const ProductList: React.FC = () => {
             <button onClick={clearSearch} className="btn-clear">Clear</button>
           )}
         </div>
+      )}
+      {successMessage && (
+        <div className="success-message">{successMessage}</div>
       )}
       {editingProduct ? (
         <div className="edit-form">
@@ -133,8 +145,8 @@ const ProductList: React.FC = () => {
             </label>
             <br />
             <div className="button-group">
-            <button type="button" className="btn-submit" onClick={handleSave}>Save</button>
-            <button type="button" className="btn-cancel" onClick={() => {setEditingProduct(null); setSearchVisible(true);}}>Cancel</button>
+              <button type="button" className="btn-submit" onClick={handleSave}>Save</button>
+              <button type="button" className="btn-cancel" onClick={() => {setEditingProduct(null); setSearchVisible(true);}}>Cancel</button>
             </div>
           </form>
         </div>

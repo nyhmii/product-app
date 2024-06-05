@@ -45,16 +45,23 @@ const ProductForm = () => {
             console.error('Error submitting product:', error);
         }
     };
-    return (react_1.default.createElement("form", { onSubmit: handleSubmit },
-        react_1.default.createElement("div", null,
-            react_1.default.createElement("label", null, "Name:"),
-            react_1.default.createElement("input", { type: "text", value: name, onChange: (e) => setName(e.target.value) })),
-        react_1.default.createElement("div", null,
-            react_1.default.createElement("label", null, "Price:"),
-            react_1.default.createElement("input", { type: "text", value: price, onChange: (e) => setPrice(e.target.value) })),
-        react_1.default.createElement("div", null,
-            react_1.default.createElement("label", null, "Description:"),
-            react_1.default.createElement("input", { type: "text", value: description, onChange: (e) => setDescription(e.target.value) })),
-        react_1.default.createElement("button", { type: "submit" }, "Submit")));
+    return (react_1.default.createElement("div", { className: "edit-form" },
+        react_1.default.createElement("h2", null, "Add Product"),
+        react_1.default.createElement("form", { onSubmit: handleSubmit },
+            react_1.default.createElement("label", null,
+                "Name:",
+                react_1.default.createElement("input", { type: "text", value: name, onChange: (e) => setName(e.target.value), className: "form-control" })),
+            react_1.default.createElement("br", null),
+            react_1.default.createElement("label", null,
+                "Price:",
+                react_1.default.createElement("input", { type: "number", value: price, onChange: (e) => setPrice(e.target.value), className: "form-control" })),
+            react_1.default.createElement("br", null),
+            react_1.default.createElement("label", null,
+                "Description:",
+                react_1.default.createElement("input", { type: "text", value: description, onChange: (e) => setDescription(e.target.value), className: "form-control" })),
+            react_1.default.createElement("br", null),
+            react_1.default.createElement("div", { className: "button-group" },
+                react_1.default.createElement("button", { type: "submit", className: "btn-submit" }, "Add"),
+                react_1.default.createElement("button", { type: "button", className: "btn-cancel", onClick: () => { setName(''); setPrice(''); setDescription(''); } }, "Clear")))));
 };
 exports.default = ProductForm;

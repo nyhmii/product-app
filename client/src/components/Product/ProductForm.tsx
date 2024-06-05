@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './ProductForm.css'; 
+import './ProductForm.css';
 
 const ProductForm: React.FC = () => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -14,6 +15,10 @@ const ProductForm: React.FC = () => {
       setName('');
       setPrice('');
       setDescription('');
+      setShowSuccess(true); // Show success message
+      setTimeout(() => {
+        setShowSuccess(false); // Hide success message after 3 seconds
+      }, 3000);
     } catch (error) {
       console.error('Error submitting product:', error);
     }
@@ -22,6 +27,7 @@ const ProductForm: React.FC = () => {
   return (
     <div className="edit-form">
       <h2>Add Product</h2>
+      {showSuccess && <div className="success-message">Product added successfully!</div>}
       <form onSubmit={handleSubmit}>
         <label>
           Name:

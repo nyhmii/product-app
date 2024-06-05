@@ -120,3 +120,15 @@
     opacity: 0.8;
   }
   
+  .success-message {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    transition: opacity 0.5s ease;
+  }
+  
+  .success-message.fade-out {
+    opacity: 0;
+  }
+  
